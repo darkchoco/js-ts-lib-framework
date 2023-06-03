@@ -62,7 +62,7 @@ function DetailProduct() {
           <tr>
             <td>상품이미지</td>
             <td>
-              <span dangerouslySetInnerHTML={ {__html: image_url} }></span>
+              <span dangerouslySetInnerHTML={ { __html: image_url } }></span>
               <br/>
               <input type="file" ref={ img }/>
             </td>
@@ -76,7 +76,7 @@ function DetailProduct() {
                 // form.append('description', description.current?.value);
                 // form.append('price', description.current?.value);
                 // form.append('img', img.current?.files[0]);
-                
+
                 const product = {
                   'product_code': data.product_code,
                   'product_name': product_name.current?.value,
@@ -92,7 +92,7 @@ function DetailProduct() {
 
                 form.append('product', blob);
                 form.append('img', img.current?.files[0]);
-                
+
                 fetch('/update', {
                   method: 'post',
                   encType: 'multipart/form-data',
@@ -106,7 +106,7 @@ function DetailProduct() {
               &nbsp;
               <button type="button" onClick={ () => {
                 if (window.confirm('삭제할까요?')) {
-                  fetch(`/delete?product_code=${ data.product_code }`, {method: 'delete'})
+                  fetch(`/delete?product_code=${ data.product_code }`, { method: 'delete' })
                     .then(() => {
                       navigate('/');
                     });
