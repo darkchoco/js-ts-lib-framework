@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={ <ListProduct/> }/>
           <Route path="/write" element={ <WriteProduct/> }/>
-          {/*<Route path="/detail/:product_code" element={ <DetailProduct/> }/>*/}
+          <Route path="/detail/:product_code" element={ <DetailProduct/> }/>
           {/* 아래 *는 그 외의 나머지 url을 입력할 경우를 의미 */}
           <Route path="*" element={ <ListProduct/> }/>
         </Routes>
