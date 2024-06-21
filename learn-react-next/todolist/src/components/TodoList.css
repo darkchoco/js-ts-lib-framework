@@ -1,0 +1,19 @@
+.TodoList > input {
+  width: 100%;  /* 화면에 가득 채우는 속성 */
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 0px;
+  margin-bottom: 20px;
+}
+
+/* focus 되었을 때의 스타일 */
+.TodoList > input:focus {
+  outline: none;
+  border-bottom: 1px solid #1f93ff;
+}
+
+.TodoList .todos_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
