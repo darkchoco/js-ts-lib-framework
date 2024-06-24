@@ -42,11 +42,25 @@ function App() {
     );
   };
 
+  const onUpdate = (targetId) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
+      )
+    );
+  };
+
+  const onDelete = (targetId) => {
+    setTodos(
+      todos.filter(todo => todo.id !== targetId)
+    );
+  };
+
   return (
     <div className="App">
       <Header/>
       <TodoEditor onCreate={ onCreate }/>
-      <TodoList todos={ todos }/>
+      <TodoList todos={ todos } onUpdate={ onUpdate } onDelete={ onDelete } />
     </div>
   );
 }
