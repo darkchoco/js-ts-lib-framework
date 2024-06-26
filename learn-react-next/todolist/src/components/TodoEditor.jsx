@@ -1,7 +1,10 @@
 import './TodoEditor.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
+import { TodoContext } from '../TodoContext.jsx';
 
-export default function TodoEditor({ onCreate }) {
+export default function TodoEditor() {
+  const { onCreate } = useContext(TodoContext);
+  
   const [content, setContent] = useState('');
   const inputRef = useRef(null);  // https://stackoverflow.com/a/74297048/1533065
 
