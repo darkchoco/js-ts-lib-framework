@@ -1,19 +1,14 @@
 import './App.css';
-import { Route, Routes, Link, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Search from './pages/Search.jsx';
 import Country from './pages/Country.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Layout from './components/Layout.jsx';
 
 function App() {
-  const nav = useNavigate();
-
-  const onClickButton = () => {
-    nav('/search');
-  };
-
   return (
-    <>
+    <Layout>
       <Routes>
         <Route path="/" element={ <Home/> }/>
         <Route path="/search" element={ <Search/> }/>
@@ -23,13 +18,7 @@ function App() {
         />
         <Route path="*" element={ <NotFound/> }/>
       </Routes>
-      <div>
-        <Link to={ '/' }>Home</Link>
-        <Link to={ '/search' }>Search</Link>
-        <Link to={ '/country' }>Country</Link>
-        <button onClick={ onClickButton }></button>
-      </div>
-    </>
+    </Layout>
   );
 }
 
