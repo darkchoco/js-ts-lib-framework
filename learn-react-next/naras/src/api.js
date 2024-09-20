@@ -12,7 +12,7 @@ export async function fetchCountries() {
 
 export async function fetchSearchResults(q) {
   try {
-    const response = await axios.get(`http://localhost:8080/search?q=${ q }`);
+    const response = await axios.get(`http://localhost:8080/countries?q=${ q }`);
     return response.data;
   } catch (e) {
     return [];
