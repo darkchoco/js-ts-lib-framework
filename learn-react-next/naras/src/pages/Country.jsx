@@ -16,6 +16,12 @@ export default function Country() {
     setInitData();
   }, [params.code]);
 
+  // 위의 코드처럼 API를 호출하고 그 결과값(data)를 state에 담아 사용할 때는(useState()) 그 값이 바로 들어와있다는
+  // 보장을 할 수 없다. 그래서 아래 코드와 같이 값이 아직 담기지 않았을 경우의 핸들링을 해주어야 한다.
+  if (!country) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className={ style.container }>
       <div className={ style.header }>
