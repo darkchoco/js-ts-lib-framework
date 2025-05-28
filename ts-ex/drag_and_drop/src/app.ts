@@ -1,7 +1,27 @@
+// Project Type
+enum ProjectStatus {
+  Active,
+  Finished
+}
+
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {
+  }
+}
+
+// 그저 function 일 뿐.
+type Listener = (items: Project[]) => void;
+
 // Project Status Management
 class ProjectState {
-  private listeners: any[] = [];
-  private projects: any[] = [];
+  private listeners: Listener[] = [];
+  private projects: Project[] = [];
   private static instance: ProjectState;
 
   private constructor() {
@@ -15,18 +35,19 @@ class ProjectState {
   }
 
   addProject(title: string, description: string, numOfPeople: number) {
-    const newProject = {
-      id: Math.random().toString(),
-      title: title,
-      description: description,
-      numOfPeople: numOfPeople,
-    };
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.Active
+    );
     this.projects.push(newProject);
     for (const listener of this.listeners)
       listener(this.projects.slice());
   }
 
-  addListener(listener: Function) {
+  addListener(listener: Listener) {
     this.listeners.push(listener);
   }
 }
@@ -73,7 +94,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
   element: HTMLElement;
-  assignedProjects: any[];
+  assignedProjects: Project[];
 
   constructor(private type: 'active' | 'finished') {
     // 절대로 NULL이 안 될 것이라고 보장할 수 있으므로 ! 을 붙인다.
@@ -87,8 +108,14 @@ class ProjectList {
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
 
-    projectState.addListener((projects: any[]) => {
-      this.assignedProjects = projects;
+    projectState.addListener((projects: Project[]) => {
+      // 여기서 active 인지 finished 인지를 가려낸다.
+      this.assignedProjects = projects.filter(pjt => {
+        if (this.type === 'active') {
+          return pjt.status === ProjectStatus.Active;
+        }
+        return pjt.status === ProjectStatus.Finished;
+      });
       this.renderProjects();
     });
 
@@ -107,6 +134,7 @@ class ProjectList {
 
   private renderProjects() {
     const listElement = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+    listElement.innerHTML = '';  // Duplication 방지를 위해 그냥 innerHTML을 다 clear 하고 다시 rendering
     for (const projectItem of this.assignedProjects) {
       const listItem = document.createElement('li');
       listItem.textContent = projectItem.title;
