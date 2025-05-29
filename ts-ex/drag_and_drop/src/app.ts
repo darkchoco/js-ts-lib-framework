@@ -90,24 +90,52 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 
-class ProjectList {
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLElement;
-  assignedProjects: Project[];
+  hostElement: T;
+  element: U;
 
-  constructor(private type: 'active' | 'finished') {
+  protected constructor(templateId: string, hostElementId: string, insertAtStart: boolean, newElementId?: string) {
     // 절대로 NULL이 안 될 것이라고 보장할 수 있으므로 ! 을 붙인다.
-    this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
-    this.hostElement = document.getElementById('app')! as HTMLDivElement;
-    this.assignedProjects = [];
+    this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement;
+    this.hostElement = document.getElementById(hostElementId)! as T;
 
     // 해당 Element의 컨텐츠에 대한 reference를 인수로 전달한다.
     // true는 해당 reference에 포함된 모든 sub 컨텐츠도 가져오겠다는 의미.
     const importedNode = document.importNode(this.templateElement.content, true);
-    this.element = importedNode.firstElementChild as HTMLElement;
-    this.element.id = `${this.type}-projects`;
+    this.element = importedNode.firstElementChild as U;
+    if (newElementId) {
+      this.element.id = newElementId;
+    }
+    this.attach(insertAtStart);
+  }
 
+  private attach(insertAtBeginning: boolean) {
+    this.hostElement.insertAdjacentElement(insertAtBeginning ? 'afterbegin' : 'beforeend', this.element);
+  }
+
+  abstract configure(): void;
+
+  abstract renderContent(): void;
+}
+
+class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+  assignedProjects: Project[];
+
+  constructor(private type: 'active' | 'finished') {
+    super('project-list', 'app', false, `${type}-projects`);
+    this.assignedProjects = [];
+
+    this.configure();
+    this.renderContent();
+  }
+
+  renderContent() {
+    this.element.querySelector('ul')!.id = `${this.type}-projects-list`;
+    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + 'PROJECTS';
+  }
+
+  configure() {
     projectState.addListener((projects: Project[]) => {
       // 여기서 active 인지 finished 인지를 가려낸다.
       this.assignedProjects = projects.filter(pjt => {
@@ -118,21 +146,9 @@ class ProjectList {
       });
       this.renderProjects();
     });
-
-    this.attach();
-    this.renderContent();
   }
 
-  private attach() {
-    this.hostElement.insertAdjacentElement('beforeend', this.element);
-  }
-
-  private renderContent() {
-    this.element.querySelector('ul')!.id = `${this.type}-projects-list`;
-    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + 'PROJECTS';
-  }
-
-  private renderProjects() {
+  renderProjects() {
     const listElement = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
     listElement.innerHTML = '';  // Duplication 방지를 위해 그냥 innerHTML을 다 clear 하고 다시 rendering
     for (const projectItem of this.assignedProjects) {
@@ -143,31 +159,19 @@ class ProjectList {
   }
 }
 
-class ProjectInput {
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLFormElement;
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
   peopleInputElement: HTMLInputElement;
 
   constructor() {
-    // 절대로 NULL이 안 될 것이라고 보장할 수 있으므로 ! 을 붙인다.
-    this.templateElement = document.getElementById('project-input')! as HTMLTemplateElement;
-    this.hostElement = document.getElementById('app')! as HTMLDivElement;
-
-    // 해당 Element의 컨텐츠에 대한 reference를 인수로 전달한다.
-    // true는 해당 reference에 포함된 모든 sub 컨텐츠도 가져오겠다는 의미.
-    const importedNode = document.importNode(this.templateElement.content, true);
-    this.element = importedNode.firstElementChild as HTMLFormElement;
-    this.element.id = 'user-input';
+    super('project-input', 'app', true, 'user-input');
 
     this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
     this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
     this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
 
     this.configure();
-    this.attach();
   }
 
   private gatherUserInput(): [string, string, number] | void {
@@ -205,7 +209,7 @@ class ProjectInput {
     this.peopleInputElement.value = '';
   }
 
-  private configure() {
+  configure() {
     this.element.addEventListener('submit', (event: Event) => {
       event.preventDefault();
       const userInput = this.gatherUserInput();
@@ -218,8 +222,7 @@ class ProjectInput {
     });
   }
 
-  private attach() {
-    this.hostElement.insertAdjacentElement('afterbegin', this.element);
+  renderContent() {
   }
 }
 
