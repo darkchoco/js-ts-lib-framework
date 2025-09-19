@@ -6,7 +6,8 @@ function App() {
   const todos = [
     { rowNumber: 1, rowDescription: '멍멍이 산책시키기', rowAssignee: 'SJ' },
     { rowNumber: 2, rowDescription: 'Home Network analysis', rowAssignee: 'IH' },
-    { rowNumber: 3, rowDescription: '커피콩 구입하기', rowAssignee: 'SJ' }
+    { rowNumber: 3, rowDescription: '커피콩 구입하기', rowAssignee: 'SJ' },
+    { rowNumber: 4, rowDescription: '속옷 구입하기', rowAssignee: 'SJ' }
   ];
 
   return (

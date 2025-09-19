@@ -12,12 +12,12 @@ function TodoTable(props) {
         </tr>
         </thead>
         <tbody>
-        <TodoRowItem rowNumber={ props.todos[0].rowNumber } rowDescription={ props.todos[0].rowDescription }
-                     rowAssignee={ props.todos[0].rowAssignee }/>
-        <TodoRowItem rowNumber={ props.todos[1].rowNumber } rowDescription={ props.todos[1].rowDescription }
-                     rowAssignee={ props.todos[1].rowAssignee }/>
-        <TodoRowItem rowNumber={ props.todos[2].rowNumber } rowDescription={ props.todos[2].rowDescription }
-                     rowAssignee={ props.todos[2].rowAssignee }/>
+        { props.todos.map((todo) => (
+          <TodoRowItem rowNumber={ todo.rowNumber }
+                       rowDescription={ todo.rowDescription }
+                       rowAssignee={ todo.rowAssignee }
+          />
+        )) }
         </tbody>
       </table>
     </div>
